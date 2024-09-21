@@ -1,14 +1,14 @@
 #ifndef ESTRUTURA_H
 #define ESTRUTURA_H
 
-typedef student{
+typedef struct student{
     int nota;
     char nome[50];
 }aluno;
 
-typedef nodulo{
+typedef struct nodulo{
     aluno *estudante;
-    no *next;
+    struct nodulo *next;
 }no;
 
 typedef struct list{

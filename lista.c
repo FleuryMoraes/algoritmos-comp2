@@ -4,6 +4,15 @@
 #include <stdbool.h>
 #include "estruturas.h"
 
+bool lista_cheia (lista *list){
+    if (list != NULL){
+        if (list->tamanho >= list->max){
+            return true;
+        }
+    }
+    return false;
+}
+
 lista *lista_criar (int size){
     lista *list = (lista*) malloc (sizeof (lista));
     if (list == NULL){
@@ -17,7 +26,7 @@ lista *lista_criar (int size){
 
 void insercao_efetiva (aluno *pessoa, lista *list, int crivo){
     int i = 0; 
-    no* tmp = (*no) malloc (sizeof (no));
+    no* tmp = (no*) malloc (sizeof (no));
     tmp->estudante = pessoa;
     no* tmp2;
     tmp->next = list->inicio;
@@ -45,7 +54,7 @@ void insercao_efetiva (aluno *pessoa, lista *list, int crivo){
     }
 
     tmp2 = NULL;
-    tmp1 = NULL;
+    tmp = NULL;
 }
 
 void inserir (aluno *pessoa, lista *list){//utilizar só depois da 1° inserção!! --> do contrário dá SEGFAULT (JA DEVE TER TAMANHO 1 AGORA);
@@ -55,9 +64,9 @@ void inserir (aluno *pessoa, lista *list){//utilizar só depois da 1° inserçã
     }
     int crivo = pessoa->nota - list->inicio->estudante->nota;//nos ajudará a tomar decisões importantes de ordenação;
 
-    if (lista_cheia (list) == FALSE){//se a lista não estiver cheia, inserimos automaticamente, sem questionar;
+    if (lista_cheia (list) == false){//se a lista não estiver cheia, inserimos automaticamente, sem questionar;
         list->tamanho++;
-        insercao_efetiva (list, pessoa, crivo);
+        insercao_efetiva (pessoa, list, crivo);
 
     }else{//se a lista já estiver cheia, devemos tomar um certo cuidado na inserção para checar se ela se estende além do esperado (pessoas com mesmas notas);
         if (crivo < 0){//se a lista já está cheia e a nota do que se quer add for menor que a nota do último da nossa fila, não inserir; 
@@ -66,10 +75,10 @@ void inserir (aluno *pessoa, lista *list){//utilizar só depois da 1° inserçã
 
         if (crivo == 0){//estenderemos a lita além de seu tamanho máximo, com inserção lexicográfica;
             list->tamanho++;
-            insercao_efetiva (list, pessoa, crivo);
+            insercao_efetiva (pessoa, list, crivo);
 
-        }else{//devemos arrancar nós da lista até que seu tamanho fique MAX-1, isto é, 'lista_cheia() == FALSE', e aí efetuar a inserção;
-            while (lista_cheia(list) == TRUE){
+        }else{//devemos arrancar nós da lista até que seu tamanho fique MAX-1, isto é, 'lista_cheia() == false', e aí efetuar a inserção;
+            while (lista_cheia(list) == true){
                 list->tamanho--;
 
                 no* tmp;
@@ -82,19 +91,9 @@ void inserir (aluno *pessoa, lista *list){//utilizar só depois da 1° inserçã
                 free (tmp);
                 tmp = NULL;
             }
-            insercao_efetiva (list, pessoa, crivo);
+            insercao_efetiva (pessoa, list, crivo);
         }
     } 
-}
-
-
-bool lista_cheia (lista *list){
-    if (list != NULL){
-        if (list->tamanho >= list->max){
-            return TRUE;
-        }
-    }
-    return FALSE;
 }
 
 void queimar_lista (lista *list){
