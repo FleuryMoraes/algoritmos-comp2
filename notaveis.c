@@ -1,62 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <stdbool.h>
+#include <string.h>
 #include "estruturas.h"
 #include "lista.h"
 
-//declarando nossas funções;
-void ler_input (int k, FILE *fp);
-aluno* ler_linha (char buffer[50]);
-void buscar_nerds (int k, FILE *fp, lista *list);
-void printar_nerds (lista* list);
+typedef struct informacao{//usada para ler as linhas do arquivo;
+    char nome[51];
+    int diff;
+}info;
 
-int main (void){
-    int k;//numero de pessoas com maxima diferença de notas;
-    FILE *fp;//ponteiro para acessar o nosso file CSV;
-    ler_input (k, fp);
-
-    printf ("ler_input\n");
-    
-    lista *list = lista_criar (k);
-
-    printf ("li a lista\n");
-
-    buscar_nerds (k, fp, list);//buscamos as pessoas requeridas e armazenamos na nossa lista;
-
-    printf ("busquei os nerds\n");
-
-    printar_nerds (list);//printamos o resultado;
-
-    printf ("printei os nerds\n");
-
-    queimar_lista (list);
-    free (fp);
-    fp = NULL;
-
-    printf ("acabou o codigo\n");
-
-    return 0;
-}
-
-void ler_input (int k, FILE *fp){
-    char buffer[50];//armazenará o nome do file;
-    scanf ("%s", buffer);
-    char* token;
-
-    token = strtok (buffer, " ");
-    fp = fopen (token, "r");
-
-    
-
-    if (fp == NULL){
-        printf ("erro na abertura do arquivo!\n");
-        exit(1);
-    }
-}
-
-aluno* ler_linha (char *buffer){//responsável por pegar a linha do file e devolver uma struct utilizável para o programa;
-    aluno *estudante = (aluno*) malloc (sizeof (aluno));
+info* ler_linha (char *buffer){//responsável por pegar a linha do file e devolver uma struct utilizável para o programa;
+    info *estudante = (info*) malloc (sizeof (info));
     char *token;
     int i;
     for (i = 0; i < 4; i++){
@@ -64,32 +19,72 @@ aluno* ler_linha (char *buffer){//responsável por pegar a linha do file e devol
         switch (i){
             case 0: strcpy(estudante->nome, token); 
                 break;
-            case 1: estudante->nota -= 10*(atoi (token));
+            case 1: estudante->diff -= 10*(atoi (token));
                 break;
-            case 3: estudante->nota += 10*(atoi (token));    
+            case 3: estudante->diff += 10*(atoi (token));    
                 break;
         }    
     }
     return estudante;
 }
 
-void buscar_nerds (int k, FILE *fp, lista *list){//criará a lista desejada;
-    char buffer[70];//ATENÇÃO;
-    char *ptr;//descartável;
-    ptr = fgets (buffer, 70, fp);//descartando a primeira linha (lixo);
-    ptr = fgets (buffer, 70, fp);
-    list->inicio->estudante = ler_linha (buffer);//armazenando a 1° pessoa na fila;
+lista* receber_input (void){
+    FILE *fp;
+    lista *list;
+    char buffer[80];//pra ler input;
+    int k;
+    scanf ("%s %d", buffer, &k);
+    printf ("rapaaiz\n");
 
-    while (!feof(fp) && fgets (buffer, 70, fp)){
-        inserir (ler_linha (buffer), list);
+    list = lista_criar (k);
+    printf ("xupa federupa\n");
+    if (list == NULL){
+        printf ("erro na alocação da fila\n");
+        exit (1);
     }
-} 
 
-void printar_nerds (lista* list){//printa em ordem crescente
-    no* tmp;//criando um ponteiro para "nó" a fim de percorrer a lista e printar os resultados;
-    tmp = list->inicio;
+    fp = fopen (buffer, "r");
+    if (fp == NULL){
+        printf ("erro no arquivo\n");
+        exit(1);
+    }
+
+    fgets (buffer, sizeof (buffer), fp);//pula 1° linha
+
+    while (fgets (buffer, sizeof (buffer), fp)){//armazenando tudo na lista;
+        info* tmp = (info*) malloc (sizeof (info));
+        tmp = ler_linha (buffer);
+        lista_inserir (tmp->nome, tmp->diff, list);
+
+        free (tmp);
+        tmp = NULL;
+    }
+
+    fclose (fp);
+    return list;
+}
+
+void printar_resultado (lista *list){
+    int count = list->max;
+    nota* tmp;
+    tmp = list->nodulo1;
+
     while (tmp != NULL){
-        printf ("%s\n", tmp->estudante->nome);
+        while ((tmp->nodulo2->next2 != NULL) && (count >=0)){
+            printf ("%s\n", tmp->nodulo2->nome);
+            tmp->nodulo2 = tmp->nodulo2->next2;
+            count--;
+        }
         tmp = tmp->next;
     }
+}
+
+int main (void){
+    printf ("oiii\n");
+    lista *list = receber_input ();
+    printf ("uiuiui\n");
+    printar_resultado (list);
+
+    lista_apagar (list);
+    return 0;
 }

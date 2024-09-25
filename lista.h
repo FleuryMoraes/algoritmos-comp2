@@ -4,10 +4,9 @@
 #include <stdbool.h>
 #include "estruturas.h"
 
-lista *lista_criar (int size);
-void inserir (aluno *pessoa, lista *list);
-bool lista_cheia (lista *list);
-void queimar_lista (lista *list);
-void insercao_efetiva (aluno *pessoa, lista *list, int crivo);
+lista* lista_criar (int k);
+void lista_apagar (lista *list);
+void lista_inserir (char *aluno, int diff, lista *list);
+
 
 #endif
