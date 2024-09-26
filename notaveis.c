@@ -71,7 +71,7 @@ void printar_resultado (lista *list){
     tmp = list->nodulo1;
 
     while ((tmp != NULL) && (count > 0)){
-        while ((tmp->nodulo2 != NULL) && (count > 0)){
+        while (tmp->nodulo2 != NULL){//nao checar o count aqui garante que printaremos além de k, se tiverem a msm nota que o último;
             printf ("%s\n", tmp->nodulo2->nome);
             tmp->nodulo2 = tmp->nodulo2->next2;
             count--;
@@ -80,7 +80,7 @@ void printar_resultado (lista *list){
     }
 }
 
-int main (void){
+int main (void){//está com problema em inserir
     lista *list = receber_input ();
     printar_resultado (list);
 
