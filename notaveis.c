@@ -12,18 +12,21 @@ typedef struct informacao{//usada para ler as linhas do arquivo;
 
 info* ler_linha (char *buffer){//responsável por pegar a linha do file e devolver uma struct utilizável para o programa;
     info *estudante = (info*) malloc (sizeof (info));
+    estudante->diff = 0;
     char *token;
     int i;
+    token = strtok(buffer, ",");
+    
     for (i = 0; i < 4; i++){
-        token = strtok(buffer, ",");
         switch (i){
             case 0: strcpy(estudante->nome, token); 
                 break;
-            case 1: estudante->diff -= 10*(atoi (token));
+            case 1: (estudante->diff) -= (int) 10*(atof (token));
                 break;
-            case 3: estudante->diff += 10*(atoi (token));    
+            case 3: (estudante->diff) += (int) 10*(atof (token));    
                 break;
-        }    
+        }
+        token = strtok(NULL, ",");    
     }
     return estudante;
 }
@@ -34,10 +37,8 @@ lista* receber_input (void){
     char buffer[80];//pra ler input;
     int k;
     scanf ("%s %d", buffer, &k);
-    printf ("rapaaiz\n");
 
     list = lista_criar (k);
-    printf ("xupa federupa\n");
     if (list == NULL){
         printf ("erro na alocação da fila\n");
         exit (1);
@@ -51,7 +52,7 @@ lista* receber_input (void){
 
     fgets (buffer, sizeof (buffer), fp);//pula 1° linha
 
-    while (fgets (buffer, sizeof (buffer), fp)){//armazenando tudo na lista;
+    while (fgets (buffer, sizeof (buffer),fp)){//armazenando tudo na lista;
         info* tmp = (info*) malloc (sizeof (info));
         tmp = ler_linha (buffer);
         lista_inserir (tmp->nome, tmp->diff, list);
@@ -69,8 +70,8 @@ void printar_resultado (lista *list){
     nota* tmp;
     tmp = list->nodulo1;
 
-    while (tmp != NULL){
-        while ((tmp->nodulo2->next2 != NULL) && (count >=0)){
+    while ((tmp != NULL) && (count > 0)){
+        while ((tmp->nodulo2 != NULL) && (count > 0)){
             printf ("%s\n", tmp->nodulo2->nome);
             tmp->nodulo2 = tmp->nodulo2->next2;
             count--;
@@ -80,9 +81,7 @@ void printar_resultado (lista *list){
 }
 
 int main (void){
-    printf ("oiii\n");
     lista *list = receber_input ();
-    printf ("uiuiui\n");
     printar_resultado (list);
 
     lista_apagar (list);

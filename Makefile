@@ -1,14 +1,12 @@
 CC = gcc
 CFLAGS =-std=c99 -g -Wall -Wextra
-TARGET = resultado
+OBJS = notaveis.c lista.c 
 
-all: $(TARGET)
-
-$(TARGET): notaveis.c lista.c
-	$(CC) $(CFLAGS) -o $(TARGET) notaveis.c lista.c
+all: lista.h estruturas.h    
+	$(CC) $(CFLAGS) $(OBJS) -o resultado
 
 clean:
 	rm -f $(TARGET) *.o
 
-run: $(TARGET)
-	./$(TARGET)
+run:
+	./resultado
