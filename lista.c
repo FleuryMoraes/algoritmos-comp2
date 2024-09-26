@@ -51,10 +51,8 @@ void lista_inserir (char *aluno, int diff, lista *list){
     nota *tmp2 = NULL;
     tmp = list->nodulo1;
     bool flag = true;
-    printf ("%d\n",diff);
 
     if ((list->tamanho) == 0){//se vazia, inserir diretamente;
-        printf ("inicio\n");
         list->nodulo1 = (nota*) malloc (sizeof (nota));
         tmp = list->nodulo1;
 
@@ -71,7 +69,6 @@ void lista_inserir (char *aluno, int diff, lista *list){
         tmp2 = NULL;
     }else{
         while (diff < tmp->diferenca){//introduzir ordenadamente na lista;
-            printf ("search\n");
             flag = false;
             if (tmp->next != NULL){
                 tmp2 = tmp;
@@ -81,7 +78,6 @@ void lista_inserir (char *aluno, int diff, lista *list){
             }
         }
         if (diff == tmp->diferenca){//se igual, criar novo nódulo2 (nome) e inserir lexicograficamente;
-            printf ("igual\n");
             pessoa *new = (pessoa*) malloc (sizeof (pessoa));
             pessoa *tmp3 = NULL;
             new->nome = (char*) malloc (sizeof (char)*51);
@@ -90,7 +86,6 @@ void lista_inserir (char *aluno, int diff, lista *list){
             bool flag2 = true;
 
             while ((new->next2 != NULL) && (strcmp (aluno, new->next2->nome) > 0)){
-                printf ("chicken\n");
                 flag2 = false;
                 tmp3 = new->next2;
                 new->next2 = new->next2->next2;
@@ -107,16 +102,22 @@ void lista_inserir (char *aluno, int diff, lista *list){
             tmp3 = NULL;
             tmp = NULL;
         }else{//se diferente, criar novo nódulo1 (nota) e inserir a pessoa;
-            printf ("novo\n");
             nota *new = (nota*) malloc (sizeof (nota));
             new->diferenca = diff;
 
-            if (tmp->next == NULL){//se for o que vai cair por último na fila;
-                tmp->next = new;
-                new->next = NULL;
-                printf ("feijao\n");
-            }else{
+            if ((flag == false) && (tmp->next != NULL)){//se tu estiver no meio da lista;
+                tmp2->next = new;
                 new->next = tmp;
+            }
+
+            if ((tmp->next == NULL) && (flag == false)){//se for o que vai cair por último na fila ou  estiver no meio;
+                if (diff > tmp->diferenca){//vai pro meio;
+                    tmp2->next = new;
+                    new->next = tmp;
+                }else{//vai pro fim
+                    tmp->next = new;
+                    new->next = NULL;
+                }
             }
 
             new->nodulo2 = (pessoa*) malloc (sizeof (pessoa));
@@ -124,8 +125,9 @@ void lista_inserir (char *aluno, int diff, lista *list){
             new->nodulo2->nome = (char*) malloc (sizeof(char) * 51);
             strcpy (new->nodulo2->nome, aluno);
 
-            if (flag == true){
+            if (flag == true){//se voce for o maior da lista;
                 list->nodulo1 = new;
+                new->next = tmp;
             }
 
             tmp = NULL;
