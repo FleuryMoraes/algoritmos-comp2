@@ -153,23 +153,15 @@ char* item_naipe (item *input){
 	const char *copas = "♥";
 	const char *paus = "♣";
     if (input->chave == 0){
-        // free (espadas); free (copas); free (paus);
-        // espadas = NULL; copas = NULL; paus = NULL;
         return ((char*) ouros);
     }
     if (input->chave == 1){
-        // free (ouros); free (copas); free (paus);
-        // ouros = NULL; copas = NULL; paus = NULL;
         return ((char*) espadas);
     }
     if (input->chave == 2){
-        // free (espadas); free (ouros); free (paus);
-        // ouros = NULL; espadas = NULL; paus = NULL;
         return ((char*) copas);
     }
     if (input->chave == 3){
-        // free (espadas); free (copas); free (ouros);
-        // espadas = NULL; copas = NULL; ouros = NULL;
         return ((char*) paus);
     }
     return NULL;

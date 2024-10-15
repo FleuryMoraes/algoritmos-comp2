@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "radix.h"
-#include "time.h"
+#include "stooge.h"
 
 int main (void) {
 	int num_bar, size_cartas;
@@ -26,7 +26,8 @@ int main (void) {
 	}
 	printf("\n");
 
-	radix_sort (matriz, size_cartas, num_bar);
+	// radix_sort (matriz, size_cartas, num_bar);
+	stooge (matriz, size_cartas, num_bar);
 
 	return 0;
 }

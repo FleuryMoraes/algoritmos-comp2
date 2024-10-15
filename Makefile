@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
-OBJS = main.c radix.c
-DEPS = radix.h estrutura.h
+OBJS = main.c radix.c stooge.c
+DEPS = radix.h stooge.h estrutura.h
 
 all: $(DEPS)
 	$(CC) $(CFLAGS) $(OBJS) -o compilado
