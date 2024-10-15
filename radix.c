@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "estrutura.h"
+#include <string.h>
 
 //cria a chave pra ordenação com base no símbolo de input (ATUALIZAR P/NAIPE); 
 void set_chave (item *elemento){
@@ -83,16 +84,21 @@ void set_symbol (item *elemento){
 //cria uma matriz de itens: cada linha é um baralho, e cada coluna, as cartas que contém;
 item** ler_input (int size_cartas, int num_bar){
     //reservando uma matriz pra ler os inputs;
-    item **matriz = NULL;
+    item **matriz;
     matriz = (item**) malloc (sizeof (item*) * num_bar);
     for (int k = 0; k < num_bar; k++){
         matriz[k] = (item*) malloc (sizeof (item) * (size_cartas + 1));//+1 pra guardar o naipe;
     }
 
     //lendo o input;
+    char symbol;
+    char* temp = (char*) malloc (sizeof (char) * size_cartas);
     for (int i = 0; i < num_bar; i++){
-        for (int j = 0; j < (size_cartas + 1); j++){
-            scanf ("%c", &(matriz[i][j].simbolo));
+        scanf (" %c", &symbol);
+        matriz[i][0].simbolo = symbol;
+        scanf (" %s", temp);
+        for (int j = 1; j < (size_cartas + 1); j++){
+            matriz[i][j].simbolo = temp[j-1];
             set_chave (&(matriz[i][j]));
         }
     }
@@ -124,13 +130,13 @@ void count_sorting (item **naipes, int num_bar, int exp){
 
     //criando e preenchendo um vetor que armazena as posições de troca das linhas da matriz;
     int *new = (int*) malloc (sizeof (int) * num_bar);
-    item *output = (item*) malloc (sizeof (item) * num_bar);
+    // item *output = (item*) malloc (sizeof (item) * num_bar);
     for (int i = (num_bar - 1); i >= 0; i--){
-        output[count[naipes[i][exp].chave] - 1].chave = naipes[i][exp].chave;
-        count[naipes[i][exp].chave]--;
-        set_symbol (&(output[count[naipes[i][exp].chave] - 1]));
+        // output[count[naipes[i][exp].chave] - 1].chave = naipes[i][exp].chave;
+        // set_symbol (&(output[count[naipes[i][exp].chave] - 1]));
 
         new[count[naipes[i][exp].chave] - 1] = i; 
+        count[naipes[i][exp].chave]--;
     }
 
     item **tmp = (item**) malloc (sizeof (item*) * num_bar);
@@ -145,17 +151,34 @@ void count_sorting (item **naipes, int num_bar, int exp){
 
     free (new);
     new = NULL;
-    free (tmp);
-    tmp = NULL;
-    free (output);
+    // free (tmp);
+    // tmp = NULL;
+    // free (output);
     free (count);
     count = NULL;
-    output = NULL;
+    // output = NULL;
 }
 
 //a cada loop do for, desce uma camada do baralho pra ordenar;
 void radix_sort (item **naipes, int size_cartas, int num_bar){
-    for (int h = (size_cartas + 1); h >0; h--){//bottom to top (LSD);
+    for (int h = size_cartas; h >= 0; h--){//bottom to top (LSD);
         count_sorting (naipes, num_bar, h);
+
+        if (h == 0){
+            printf ("Após ordenar por naipe:\n");
+        }else{
+            printf ("Após ordenar o %d° digito dos valores:\n", h);
+        }
+
+        for (int p = 0; p < num_bar; p++){//printando os elementos após enésimo count-sorting;
+            for (int l = 0; l < size_cartas + 1; l++){
+                printf ("%c", naipes[p][l].simbolo);
+                if (l==0){
+                    printf(" ");
+                } 
+            }
+            printf(";");
+        }
+        printf ("\n");
     }
 }

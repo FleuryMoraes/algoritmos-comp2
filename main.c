@@ -4,7 +4,6 @@
 #include "time.h"
 
 int main (void) {
-	printf ("caju\n");
 	int num_bar, size_cartas;
 	scanf ("%d %d", &num_bar, &size_cartas);
 	item **matriz =  ler_input (size_cartas, num_bar);
@@ -13,14 +12,19 @@ int main (void) {
 		exit(1);
 	}
 
-	radix_sort (matriz, size_cartas, num_bar);
-
+	//printando a ordem no início;
 	for (int i = 0; i < num_bar; i++){
 		for (int j = 0; j < size_cartas+1; j++){
 			printf ("%c", matriz[i][j].simbolo);
+			if(j==0){
+				printf(" ");
+			}
 		}
-		printf("\n");
+		printf(";");
 	}
+	printf("\n");
+
+	radix_sort (matriz, size_cartas, num_bar);
 
 	return 0;
 }
