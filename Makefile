@@ -1,12 +1,19 @@
 CC = gcc
-CFLAGS =-std=c99 -g -Wall -Wextra
-OBJS = notaveis.c lista.c 
+CFLAGS = -Wall -Wextra -Werror
+OBJS = main.c radix.c
+DEPS = radix.h estrutura.h
 
-all: lista.h estruturas.h    
-	$(CC) $(CFLAGS) $(OBJS) -o resultado
+all: $(DEPS)
+	$(CC) $(CFLAGS) $(OBJS) -o compilado
 
-clean:
-	rm -f $(TARGET) *.o
+tempo:
+	$(CC) $(CFLAGS) $(OBJS) -o compilado
+
+zip:
+	zip sorting.zip $(OBJS) $(DEPS) Makefile
 
 run:
-	./resultado
+	./compilado
+
+clean:
+	rm compilado
