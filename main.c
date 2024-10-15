@@ -15,9 +15,11 @@ int main (void) {
 	//printando a ordem no início;
 	for (int i = 0; i < num_bar; i++){
 		for (int j = 0; j < size_cartas+1; j++){
-			printf ("%c", matriz[i][j].simbolo);
-			if(j==0){
-				printf(" ");
+			if (j == 0){
+				char *hell = item_naipe (&(matriz[i][j]));
+				printf ("%s ", hell);
+			}else{
+				printf ("%c", matriz[i][j].simbolo);
 			}
 		}
 		printf(";");

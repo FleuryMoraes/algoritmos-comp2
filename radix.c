@@ -3,7 +3,7 @@
 #include "estrutura.h"
 #include <string.h>
 
-//cria a chave pra ordenação com base no símbolo de input (ATUALIZAR P/NAIPE); 
+//cria a chave pra ordenação com base no símbolo de input; 
 void set_chave (item *elemento){
     switch (elemento->simbolo){
         case '4':
@@ -36,13 +36,33 @@ void set_chave (item *elemento){
         case '3':
             elemento->chave = 9;
             break;
-        default://caso em que estamos lidando com o naipe; deixar pra depois!
-            elemento->chave = 69;
+        default:
+            printf("simbolo proibido\n");
             break;    
     }
 }
 
-//cria o simbolo com base na chave de input (ATUALIZAR P/NAIPE);
+void set_chave_naipe (item *elemento){
+    switch (elemento->simbolo){
+        case 'o':
+            elemento->chave = 0;
+            break;
+        case 'e':
+            elemento->chave = 1;
+            break;
+        case 'c':
+            elemento->chave = 2;
+            break;
+        case 'p':
+            elemento->chave = 3;
+            break;
+        default:
+            printf ("imbolo proibido\n");
+            break;                
+    }
+}
+
+//cria o simbolo com base na chave de input;
 void set_symbol (item *elemento){
         switch (elemento->chave){
         case 0:
@@ -75,10 +95,84 @@ void set_symbol (item *elemento){
         case 9:
             elemento->simbolo = '3';
             break;
-        default://caso em que estamos lidando com o naipe; deixar pra depois!
-            elemento->simbolo = 'g';
+        default:
+            printf ("chave proibida\n");
             break;    
     }
+}
+
+void set_symbol_naipe (item *elemento){
+    switch (elemento->chave){
+        case 0:
+            elemento->chave = 'o';
+            break;
+        case 1:
+            elemento->chave = 'e';
+            break;
+        case 2:
+            elemento->chave = 'c';
+            break;
+        case 3:
+            elemento->chave = 'p';
+            break;
+        default:
+            printf ("simbolo proibido\n");
+            break;                
+    }
+}
+
+//as duas funções abaixo traduzem entre naipe e item;
+item* naipe_item (char *input){
+    item *result = (item*) malloc (sizeof (item));
+    const char *espadas = "♠";
+	const char *ouros = "♦";
+	const char *copas = "♥";
+	const char *paus = "♣";
+    if (strcmp (ouros, input) == 0){
+        result->simbolo = 'o';
+        result->chave = 0;
+    }
+    if (strcmp (espadas, input) == 0){
+        result->simbolo = 'e';
+        result->chave = 1;
+    }
+    if (strcmp (copas, input) == 0){
+        result->simbolo = 'c';
+        result->chave = 2;
+    }
+    if (strcmp (paus, input) == 0){
+        result->simbolo = 'p';
+        result->chave = 3;
+    }
+    return (result);
+}
+
+char* item_naipe (item *input){
+    const char *espadas = "♠";
+	const char *ouros = "♦";
+	const char *copas = "♥";
+	const char *paus = "♣";
+    if (input->chave == 0){
+        // free (espadas); free (copas); free (paus);
+        // espadas = NULL; copas = NULL; paus = NULL;
+        return ((char*) ouros);
+    }
+    if (input->chave == 1){
+        // free (ouros); free (copas); free (paus);
+        // ouros = NULL; copas = NULL; paus = NULL;
+        return ((char*) espadas);
+    }
+    if (input->chave == 2){
+        // free (espadas); free (ouros); free (paus);
+        // ouros = NULL; espadas = NULL; paus = NULL;
+        return ((char*) copas);
+    }
+    if (input->chave == 3){
+        // free (espadas); free (copas); free (ouros);
+        // espadas = NULL; copas = NULL; ouros = NULL;
+        return ((char*) paus);
+    }
+    return NULL;
 }
 
 //cria uma matriz de itens: cada linha é um baralho, e cada coluna, as cartas que contém;
@@ -91,11 +185,15 @@ item** ler_input (int size_cartas, int num_bar){
     }
 
     //lendo o input;
-    char symbol;
-    char* temp = (char*) malloc (sizeof (char) * size_cartas);
+    char* tmp = (char*) malloc (sizeof (char) * 4);//vai ler o naipe;
+    char* temp = (char*) malloc (sizeof (char) * size_cartas);//vai ler os dígitos;
     for (int i = 0; i < num_bar; i++){
-        scanf (" %c", &symbol);
-        matriz[i][0].simbolo = symbol;
+        scanf (" %s", tmp);
+        item *symbol = naipe_item (tmp);
+        matriz[i][0].simbolo = symbol->simbolo;
+        matriz[i][0].chave = symbol->chave;
+        free (symbol);
+        symbol = NULL;
         scanf (" %s", temp);
         for (int j = 1; j < (size_cartas + 1); j++){
             matriz[i][j].simbolo = temp[j-1];
@@ -130,11 +228,7 @@ void count_sorting (item **naipes, int num_bar, int exp){
 
     //criando e preenchendo um vetor que armazena as posições de troca das linhas da matriz;
     int *new = (int*) malloc (sizeof (int) * num_bar);
-    // item *output = (item*) malloc (sizeof (item) * num_bar);
     for (int i = (num_bar - 1); i >= 0; i--){
-        // output[count[naipes[i][exp].chave] - 1].chave = naipes[i][exp].chave;
-        // set_symbol (&(output[count[naipes[i][exp].chave] - 1]));
-
         new[count[naipes[i][exp].chave] - 1] = i; 
         count[naipes[i][exp].chave]--;
     }
@@ -151,12 +245,8 @@ void count_sorting (item **naipes, int num_bar, int exp){
 
     free (new);
     new = NULL;
-    // free (tmp);
-    // tmp = NULL;
-    // free (output);
     free (count);
     count = NULL;
-    // output = NULL;
 }
 
 //a cada loop do for, desce uma camada do baralho pra ordenar;
@@ -167,15 +257,17 @@ void radix_sort (item **naipes, int size_cartas, int num_bar){
         if (h == 0){
             printf ("Após ordenar por naipe:\n");
         }else{
-            printf ("Após ordenar o %d° digito dos valores:\n", h);
+            printf ("Após ordenar o %d° dígito dos valores:\n", h);
         }
 
         for (int p = 0; p < num_bar; p++){//printando os elementos após enésimo count-sorting;
             for (int l = 0; l < size_cartas + 1; l++){
-                printf ("%c", naipes[p][l].simbolo);
-                if (l==0){
-                    printf(" ");
-                } 
+                if (l == 0){
+                    char *hell = item_naipe (&(naipes[p][l]));
+                    printf ("%s ", hell);
+                }else{
+                    printf ("%c", naipes[p][l].simbolo);
+                }
             }
             printf(";");
         }
